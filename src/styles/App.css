@@ -119,6 +119,37 @@ body {
   display: none;
 }
 
+.navbar-container {
+  transition: all 0.3s ease;
+}
+
+.mobile-menu {
+  animation: slideDown 0.3s ease forwards;
+}
+
+.mobile-menu-button {
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu-button:hover {
+  transform: scale(1.1);
+}
+
+.mobile-menu-overlay {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
@@ -267,35 +298,3 @@ input:focus, textarea:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: #00b085;
 }
-
-/* Navigation */
-.navbar-container {
-  transition: all 0.3s ease;
-}
-
-.mobile-menu {
-  animation: slideDown 0.3s ease forwards;
-}
-
-.mobile-menu-button {
-  transition: transform 0.3s ease;
-}
-
-.mobile-menu-button:hover {
-  transform: scale(1.1);
-}
-
-.mobile-menu-overlay {
-  animation: fadeIn 0.3s ease forwards;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-} 
