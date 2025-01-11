@@ -132,7 +132,12 @@ const Projects = () => {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '2rem',
-            padding: '2rem 0'
+            padding: '2rem 0',
+            '@media (max-width: 768px)': {
+              gridTemplateColumns: '1fr',
+              gap: '1.5rem',
+              padding: '1rem 0'
+            }
           }}>
             {[
               {
@@ -166,7 +171,8 @@ const Projects = () => {
                 rel="noopener noreferrer"
                 style={{
                   textDecoration: 'none',
-                  color: 'inherit'
+                  color: 'inherit',
+                  width: '100%'
                 }}
               >
                 <div style={{
@@ -178,7 +184,11 @@ const Projects = () => {
                   cursor: 'pointer',
                   backdropFilter: 'blur(10px)',
                   opacity: 0,
-                  animation: `fadeInUp 0.5s ease forwards ${index * 0.2}s`
+                  animation: `fadeInUp 0.5s ease forwards ${index * 0.2}s`,
+                  '@media (max-width: 768px)': {
+                    margin: '0 auto',
+                    maxWidth: '100%'
+                  }
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
@@ -204,7 +214,10 @@ const Projects = () => {
                     transition: 'all 0.3s ease',
                     position: 'relative',
                     overflow: 'hidden',
-                    padding: '1rem'
+                    padding: '1rem',
+                    '@media (max-width: 768px)': {
+                      height: '180px'
+                    }
                   }}>
                     <div style={{
                       position: 'absolute',
@@ -217,9 +230,14 @@ const Projects = () => {
                       transition: 'opacity 0.3s ease'
                     }} className="overlay" />
                   </div>
-                  <div style={{ padding: '1.5rem' }}>
+                  <div style={{ 
+                    padding: '1.5rem',
+                    '@media (max-width: 768px)': {
+                      padding: '1rem'
+                    }
+                  }}>
                     <h3 style={{ 
-                      fontSize: '1.5rem',
+                      fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
                       marginBottom: '1rem',
                       color: 'var(--accent-color)'
                     }}>
@@ -228,21 +246,25 @@ const Projects = () => {
                     <p style={{ 
                       marginBottom: '1rem',
                       lineHeight: 1.6,
-                      opacity: 0.8
+                      opacity: 0.8,
+                      fontSize: 'clamp(0.9rem, 3vw, 1rem)'
                     }}>
                       {project.description}
                     </p>
                     <div style={{
                       display: 'flex',
                       flexWrap: 'wrap',
-                      gap: '0.5rem'
+                      gap: '0.5rem',
+                      '@media (max-width: 768px)': {
+                        gap: '0.4rem'
+                      }
                     }}>
                       {project.tech.map((tech, i) => (
                         <span key={i} style={{
                           padding: '0.3rem 0.8rem',
                           backgroundColor: 'rgba(255, 255, 255, 0.1)',
                           borderRadius: '15px',
-                          fontSize: '0.9rem',
+                          fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
                           opacity: 0.8
                         }}>
                           {tech}

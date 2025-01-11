@@ -18,6 +18,7 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 .app {
@@ -28,13 +29,14 @@ body {
 
 .main-content {
   flex: 1;
-  padding-top: 80px;
+  padding-top: 0;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+  width: 100%;
 }
 
 .section {
@@ -92,6 +94,8 @@ body {
   border-radius: 5px;
   font-weight: 500;
   transition: transform 0.3s ease, background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
 }
 
 .btn:hover {
@@ -110,21 +114,188 @@ body {
   max-width: 600px;
 }
 
-/* Responsive Design */
+/* Mobile Menu */
+.mobile-menu-button {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  .navbar {
-    padding: 0 1rem;
-  }
-
-  .nav-links {
-    gap: 1rem;
-  }
-
   .container {
     padding: 0 1rem;
   }
 
   .section {
     padding: 2rem 0;
+  }
+
+  .mobile-menu-button {
+    display: block;
+  }
+
+  .desktop-menu {
+    display: none !important;
+  }
+
+  .hero {
+    padding-top: 2rem;
+  }
+
+  .hero-content {
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .image-container {
+    width: 300px !important;
+    height: 300px !important;
+    margin: 2rem auto;
+  }
+
+  /* Project cards */
+  .project-card {
+    min-width: 100% !important;
+  }
+
+  /* Skills grid */
+  .skills-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Contact form */
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  /* Achievements */
+  .achievements-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Typography */
+  h1 {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  }
+
+  p {
+    font-size: 1rem !important;
+  }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    text-align: center;
+    margin: 0.5rem 0;
+  }
+
+  /* Social links */
+  .social-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Utility classes */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease forwards;
+}
+
+/* Form elements */
+input, textarea {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00b085;
+}
+
+/* Navigation */
+.navbar-container {
+  transition: all 0.3s ease;
+}
+
+.mobile-menu {
+  animation: slideDown 0.3s ease forwards;
+}
+
+.mobile-menu-button {
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu-button:hover {
+  transform: scale(1.1);
+}
+
+.mobile-menu-overlay {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 } 

@@ -164,16 +164,27 @@ const Home = () => {
             alignItems: 'center',
             gap: '2rem',
             flexWrap: 'wrap',
-            width: '100%'
+            width: '100%',
+            justifyContent: 'center'
           }}>
-            <div className="hero-content" style={{ flex: '1', minWidth: '300px' }}>
+            <div className="hero-content" style={{ 
+              flex: '1', 
+              minWidth: '300px',
+              '@media (max-width: 768px)': {
+                textAlign: 'center',
+                minWidth: '100%'
+              }
+            }}>
               <div ref={titleRef} style={{ marginBottom: '1.5rem' }}>
                 <h1 style={{ 
-                  fontSize: 'clamp(2.5rem, 5vw, 4rem)', 
+                  fontSize: 'clamp(2rem, 5vw, 4rem)', 
                   marginBottom: '1rem',
                   color: 'var(--text-color)',
                   fontWeight: '700',
-                  position: 'relative'
+                  position: 'relative',
+                  '@media (max-width: 768px)': {
+                    fontSize: 'clamp(2rem, 8vw, 3rem)'
+                  }
                 }}>
                   Hi, I'm <span style={{ 
                     color: 'var(--accent-color)',
@@ -187,11 +198,15 @@ const Home = () => {
 
               <div ref={subtitleRef}>
                 <p style={{ 
-                  fontSize: 'clamp(1.1rem, 2vw, 1.5rem)', 
+                  fontSize: 'clamp(1rem, 2vw, 1.5rem)', 
                   marginBottom: '2rem', 
                   opacity: 0.9,
                   maxWidth: '600px',
-                  lineHeight: 1.6
+                  lineHeight: 1.6,
+                  '@media (max-width: 768px)': {
+                    fontSize: '1rem',
+                    margin: '0 auto 2rem auto'
+                  }
                 }}>
                   I'm a passionate Full Stack Developer with expertise in modern web technologies and a knack for building user-friendly, efficient, and functional digital solutions.
                 </p>
@@ -200,7 +215,10 @@ const Home = () => {
               <div ref={buttonsRef} className="hero-buttons" style={{ 
                 display: 'flex', 
                 gap: '1rem',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                '@media (max-width: 768px)': {
+                  justifyContent: 'center'
+                }
               }}>
                 <Link to="/projects" className="btn" style={{
                   padding: '1rem 2rem',
@@ -245,13 +263,18 @@ const Home = () => {
 
             <div ref={imageRef} style={{
               flex: '1',
-              minWidth: '400px',
+              minWidth: '300px',
+              maxWidth: '400px',
               opacity: '0',
               transform: 'translateY(20px)',
               transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              '@media (max-width: 768px)': {
+                minWidth: '250px',
+                margin: '2rem auto'
+              }
             }}>
               <div className="image-container" style={{
                 position: 'relative',
@@ -289,7 +312,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="section" ref={skillsRef} style={{
+        <section className="section achievements-grid" ref={skillsRef} style={{
           paddingTop: '2rem',
           paddingBottom: '6rem'
         }}>
@@ -298,7 +321,10 @@ const Home = () => {
             marginBottom: '3rem',
             textAlign: 'center',
             color: 'var(--accent-color)',
-            position: 'relative'
+            position: 'relative',
+            '@media (max-width: 768px)': {
+              fontSize: 'clamp(1.5rem, 6vw, 2rem)'
+            }
           }}>
             Achievements
             <div style={{
@@ -315,7 +341,11 @@ const Home = () => {
           <div style={{ 
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '2rem'
+            gap: '2rem',
+            '@media (max-width: 768px)': {
+              gridTemplateColumns: '1fr',
+              gap: '1.5rem'
+            }
           }}>
             {[
               {

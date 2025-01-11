@@ -174,18 +174,29 @@ const Contact = () => {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '4rem',
-            alignItems: 'start'
+            alignItems: 'start',
+            '@media (max-width: 768px)': {
+              gridTemplateColumns: '1fr',
+              gap: '2rem'
+            }
           }}>
             <div ref={formRef} style={{
               backgroundColor: 'rgba(42, 42, 42, 0.5)',
               borderRadius: '20px',
               padding: '2rem',
               border: '1px solid rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)'
+              backdropFilter: 'blur(10px)',
+              '@media (max-width: 768px)': {
+                padding: '1.5rem'
+              }
             }}>
               <form ref={formRef} onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Name</label>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '0.5rem',
+                    fontSize: 'clamp(0.9rem, 2vw, 1rem)'
+                  }}>Name</label>
                   <input
                     name="user_name"
                     type="text"
@@ -197,12 +208,16 @@ const Contact = () => {
                       border: '1px solid rgba(255, 255, 255, 0.2)',
                       borderRadius: '8px',
                       color: 'var(--text-color)',
-                      fontSize: '1rem'
+                      fontSize: 'clamp(0.9rem, 2vw, 1rem)'
                     }}
                   />
                 </div>
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '0.5rem',
+                    fontSize: 'clamp(0.9rem, 2vw, 1rem)'
+                  }}>Email</label>
                   <input
                     name="user_email"
                     type="email"
@@ -214,12 +229,16 @@ const Contact = () => {
                       border: '1px solid rgba(255, 255, 255, 0.2)',
                       borderRadius: '8px',
                       color: 'var(--text-color)',
-                      fontSize: '1rem'
+                      fontSize: 'clamp(0.9rem, 2vw, 1rem)'
                     }}
                   />
                 </div>
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Message</label>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '0.5rem',
+                    fontSize: 'clamp(0.9rem, 2vw, 1rem)'
+                  }}>Message</label>
                   <textarea
                     name="message"
                     rows="5"
@@ -231,7 +250,7 @@ const Contact = () => {
                       border: '1px solid rgba(255, 255, 255, 0.2)',
                       borderRadius: '8px',
                       color: 'var(--text-color)',
-                      fontSize: '1rem',
+                      fontSize: 'clamp(0.9rem, 2vw, 1rem)',
                       resize: 'vertical'
                     }}
                   ></textarea>
@@ -255,11 +274,14 @@ const Contact = () => {
                   style={{
                     width: '100%',
                     padding: '1rem',
-                    fontSize: '1.1rem',
+                    fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
                     position: 'relative',
                     overflow: 'hidden',
                     opacity: isSubmitting ? 0.7 : 1,
-                    cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    '@media (max-width: 768px)': {
+                      marginTop: '1rem'
+                    }
                   }}
                 >
                   <span style={{ position: 'relative', zIndex: 1 }}>
@@ -283,10 +305,13 @@ const Contact = () => {
               borderRadius: '20px',
               padding: '2rem',
               border: '1px solid rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)'
+              backdropFilter: 'blur(10px)',
+              '@media (max-width: 768px)': {
+                padding: '1.5rem'
+              }
             }}>
               <h2 style={{ 
-                fontSize: '1.8rem',
+                fontSize: 'clamp(1.5rem, 4vw, 1.8rem)',
                 marginBottom: '1.5rem',
                 color: 'var(--accent-color)'
               }}>
@@ -296,7 +321,10 @@ const Contact = () => {
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '1.5rem'
+                gap: '1.5rem',
+                '@media (max-width: 768px)': {
+                  gap: '1rem'
+                }
               }}>
                 <a
                   href="https://www.linkedin.com/in/krishnav-kanoi-3ba53a217"
@@ -306,12 +334,13 @@ const Contact = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
-                    padding: '1rem',
+                    padding: 'clamp(0.8rem, 2vw, 1rem)',
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '8px',
                     transition: 'all 0.3s ease',
                     color: 'inherit',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    fontSize: 'clamp(0.9rem, 2vw, 1rem)'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
@@ -334,12 +363,13 @@ const Contact = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
-                    padding: '1rem',
+                    padding: 'clamp(0.8rem, 2vw, 1rem)',
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '8px',
                     transition: 'all 0.3s ease',
                     color: 'inherit',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    fontSize: 'clamp(0.9rem, 2vw, 1rem)'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
@@ -369,12 +399,13 @@ const Contact = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
-                    padding: '1rem',
+                    padding: 'clamp(0.8rem, 2vw, 1rem)',
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '8px',
                     transition: 'all 0.3s ease',
                     color: 'inherit',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    fontSize: 'clamp(0.9rem, 2vw, 1rem)'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
@@ -396,8 +427,8 @@ const Contact = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
-                    padding: '1rem',
-                    fontSize: '1rem',
+                    padding: 'clamp(0.8rem, 2vw, 1rem)',
+                    fontSize: 'clamp(0.9rem, 2vw, 1rem)',
                     width: '100%',
                     justifyContent: 'flex-start',
                     position: 'relative',
