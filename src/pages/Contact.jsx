@@ -1,27 +1,21 @@
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Float, MeshDistortMaterial } from '@react-three/drei';
 import emailjs from '@emailjs/browser';
 
-function AnimatedShape({ position, color, speed, scale, shape }) {
+function AnimatedSphere({ position, color, speed, scale }) {
   return (
     <Float
       speed={speed}
-      rotationIntensity={2}
-      floatIntensity={2}
+      rotationIntensity={1.5}
+      floatIntensity={1.5}
     >
       <mesh position={position} scale={scale}>
-        {shape === 'torus' ? (
-          <torusGeometry args={[1, 0.4, 16, 32]} />
-        ) : shape === 'box' ? (
-          <boxGeometry args={[1, 1, 1]} />
-        ) : (
-          <octahedronGeometry args={[1]} />
-        )}
+        <sphereGeometry args={[1, 32, 32]} />
         <MeshDistortMaterial
           color={color}
-          speed={0.4}
-          distort={0.4}
+          speed={0.3}
+          distort={0.3}
           radius={1}
         />
       </mesh>
@@ -32,26 +26,41 @@ function AnimatedShape({ position, color, speed, scale, shape }) {
 function Background() {
   return (
     <>
-      <AnimatedShape 
-        position={[6, 3, -10]} 
-        color="#00A3FF" 
+      <AnimatedSphere 
+        position={[8, 2, -10]} 
+        color="#00C896" 
         speed={2} 
-        scale={1.5}
-        shape="torus"
+        scale={2.5}
       />
-      <AnimatedShape 
-        position={[-6, -2, -8]} 
-        color="#FF6B6B" 
+      <AnimatedSphere 
+        position={[-8, -4, -8]} 
+        color="#00C896" 
         speed={1.5} 
-        scale={1.2}
-        shape="box"
+        scale={2}
       />
-      <AnimatedShape 
-        position={[0, -4, -6]} 
-        color="#FFD93D" 
-        speed={2.5} 
-        scale={1}
-        shape="octahedron"
+      <AnimatedSphere
+        position={[0, -6, -12]}
+        color="#00C896"
+        speed={2.5}
+        scale={1.5}
+      />
+      <AnimatedSphere
+        position={[5, 3, -10]}
+        color="#00C896"
+        speed={1.8}
+        scale={2}
+      />
+      <AnimatedSphere
+        position={[-5, -2, -8]}
+        color="#00C896"
+        speed={2.2}
+        scale={1.8}
+      />
+      <AnimatedSphere
+        position={[-5, 0, -8]}
+        color="#00C896"
+        speed={2}
+        scale={1.5}
       />
       <ambientLight intensity={0.4} />
       <directionalLight position={[10, 10, 5]} intensity={0.8} />
@@ -61,56 +70,67 @@ function Background() {
 
 const Contact = () => {
   const formRef = useRef(null);
-  const [status, setStatus] = useState('');
+  const titleRef = useRef(null);
+  const socialRef = useRef(null);
+  const [formStatus, setFormStatus] = useState({ message: '', isError: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.style.transform = 'translateY(0)';
-            entry.target.style.opacity = '1';
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (formRef.current) {
-      formRef.current.style.transform = 'translateY(50px)';
-      formRef.current.style.opacity = '0';
-      formRef.current.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-      observer.observe(formRef.current);
-    }
-
-    return () => observer.disconnect();
+    const elements = [titleRef, formRef, socialRef];
+    elements.forEach((ref, index) => {
+      if (ref.current) {
+        ref.current.style.opacity = '0';
+        ref.current.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          ref.current.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          ref.current.style.opacity = '1';
+          ref.current.style.transform = 'translateY(0)';
+        }, index * 200);
+      }
+    });
   }, []);
+
+  const handleDownloadResume = () => {
+    // Replace with your actual resume file path
+    const resumeUrl = '/path-to-your-resume.pdf';
+    const link = document.createElement('a');
+    link.href = resumeUrl;
+    link.download = 'john-doe-resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setStatus('sending');
+    setFormStatus({ message: '', isError: false });
 
     try {
       await emailjs.sendForm(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
+        'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
         formRef.current,
-        'YOUR_PUBLIC_KEY'
+        'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
       );
-      setStatus('success');
-      e.target.reset();
+      
+      setFormStatus({
+        message: 'Message sent successfully! I will get back to you soon.',
+        isError: false
+      });
+      formRef.current.reset();
     } catch (error) {
-      setStatus('error');
+      setFormStatus({
+        message: 'Failed to send message. Please try again.',
+        isError: true
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
-    setTimeout(() => setStatus(''), 5000);
   };
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
       {/* 3D Background */}
       <div style={{
         position: 'fixed',
@@ -124,244 +144,293 @@ const Contact = () => {
       }}>
         <Canvas
           camera={{ position: [0, 0, 10], fov: 45 }}
-          style={{ 
-            background: 'transparent',
-            width: '100%',
-            height: '100%'
-          }}
+          style={{ background: 'transparent' }}
         >
-          <Suspense fallback={null}>
-            <Background />
-            <OrbitControls
-              enableZoom={false}
-              enablePan={false}
-              enableRotate={false}
-              autoRotate
-              autoRotateSpeed={0.5}
-            />
-          </Suspense>
+          <Background />
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            enableRotate={false}
+          />
         </Canvas>
       </div>
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <section className="section">
-          <h1 style={{ 
-            fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-            marginBottom: '1.5rem',
-            background: 'linear-gradient(45deg, var(--text-color), var(--accent-color))',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            textAlign: 'center'
-          }}>
-            Get in Touch
-          </h1>
-
-          <p style={{
-            textAlign: 'center',
-            maxWidth: '600px',
-            margin: '0 auto 4rem',
-            opacity: 0.8,
-            fontSize: '1.1rem',
-            lineHeight: 1.6
-          }}>
-            Have a question or want to work together? Feel free to reach out!
-          </p>
+          <div ref={titleRef}>
+            <h1 style={{ 
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+              marginBottom: '2rem',
+              textAlign: 'center',
+              background: 'linear-gradient(45deg, var(--text-color), var(--accent-color))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>
+              Get In Touch
+            </h1>
+          </div>
 
           <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            position: 'relative',
-            padding: '2rem'
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '4rem',
+            alignItems: 'start'
           }}>
-            <form
-              ref={formRef}
-              onSubmit={handleSubmit}
-              style={{
-                width: '100%',
-                maxWidth: '600px',
-                backgroundColor: 'rgba(42, 42, 42, 0.5)',
-                borderRadius: '20px',
-                padding: '2rem',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)',
-                position: 'relative',
-                boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)'
-              }}
-            >
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label
-                  htmlFor="name"
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    fontSize: '1.1rem',
-                    color: 'var(--accent-color)'
-                  }}
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.8rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '10px',
-                    color: 'var(--text-color)',
-                    fontSize: '1rem',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-color)';
-                    e.target.style.boxShadow = '0 0 0 2px var(--accent-color-transparent)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label
-                  htmlFor="email"
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    fontSize: '1.1rem',
-                    color: 'var(--accent-color)'
-                  }}
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.8rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '10px',
-                    color: 'var(--text-color)',
-                    fontSize: '1rem',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-color)';
-                    e.target.style.boxShadow = '0 0 0 2px var(--accent-color-transparent)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label
-                  htmlFor="message"
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    fontSize: '1.1rem',
-                    color: 'var(--accent-color)'
-                  }}
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows="5"
-                  style={{
-                    width: '100%',
-                    padding: '0.8rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '10px',
-                    color: 'var(--text-color)',
-                    fontSize: '1rem',
-                    resize: 'vertical',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-color)';
-                    e.target.style.boxShadow = '0 0 0 2px var(--accent-color-transparent)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  backgroundColor: 'var(--accent-color)',
-                  border: 'none',
-                  borderRadius: '10px',
-                  color: '#fff',
-                  fontSize: '1.1rem',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </button>
-
-              {status && (
-                <div
-                  style={{
-                    marginTop: '1rem',
-                    padding: '1rem',
-                    borderRadius: '10px',
-                    backgroundColor: status === 'success' 
-                      ? 'rgba(0, 200, 0, 0.1)' 
-                      : status === 'error'
-                      ? 'rgba(255, 0, 0, 0.1)'
-                      : 'rgba(0, 0, 0, 0.1)',
-                    color: status === 'success'
-                      ? '#00c800'
-                      : status === 'error'
-                      ? '#ff0000'
-                      : 'var(--text-color)',
-                    textAlign: 'center'
-                  }}
-                >
-                  {status === 'success' 
-                    ? 'Message sent successfully!'
-                    : status === 'error'
-                    ? 'Failed to send message. Please try again.'
-                    : 'Sending message...'}
+            <div ref={formRef} style={{
+              backgroundColor: 'rgba(42, 42, 42, 0.5)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              <form ref={formRef} onSubmit={handleSubmit}>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Name</label>
+                  <input
+                    name="user_name"
+                    type="text"
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.8rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'var(--text-color)',
+                      fontSize: '1rem'
+                    }}
+                  />
                 </div>
-              )}
-            </form>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
+                  <input
+                    name="user_email"
+                    type="email"
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.8rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'var(--text-color)',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Message</label>
+                  <textarea
+                    name="message"
+                    rows="5"
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.8rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'var(--text-color)',
+                      fontSize: '1rem',
+                      resize: 'vertical'
+                    }}
+                  ></textarea>
+                </div>
+                {formStatus.message && (
+                  <div style={{
+                    marginBottom: '1rem',
+                    padding: '0.8rem',
+                    borderRadius: '8px',
+                    backgroundColor: formStatus.isError ? 'rgba(255, 0, 0, 0.1)' : 'rgba(0, 255, 0, 0.1)',
+                    color: formStatus.isError ? '#ff6b6b' : '#00c896',
+                    textAlign: 'center'
+                  }}>
+                    {formStatus.message}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  className="btn"
+                  disabled={isSubmitting}
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    fontSize: '1.1rem',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    opacity: isSubmitting ? 0.7 : 1,
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <span style={{ position: 'relative', zIndex: 1 }}>
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                  </span>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: '-100%',
+                    width: '200%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                    transition: 'transform 0.5s ease',
+                  }} className="btn-shine" />
+                </button>
+              </form>
+            </div>
+
+            <div ref={socialRef} style={{
+              backgroundColor: 'rgba(42, 42, 42, 0.5)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              <h2 style={{ 
+                fontSize: '1.8rem',
+                marginBottom: '1.5rem',
+                color: 'var(--accent-color)'
+              }}>
+                Connect With Me
+              </h2>
+              
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem'
+              }}>
+                <a
+                  href="https://www.linkedin.com/in/krishnav-kanoi-3ba53a217"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    padding: '1rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    transition: 'all 0.3s ease',
+                    color: 'inherit',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.transform = 'translateX(10px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  <i className="fab fa-linkedin" style={{ fontSize: '1.5rem', color: '#0077B5' }}></i>
+                  <span>Connect on LinkedIn</span>
+                </a>
+
+                <a
+                  href="https://x.com/KanoiKrishnav"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    padding: '1rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    transition: 'all 0.3s ease',
+                    color: 'inherit',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.transform = 'translateX(10px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  <svg 
+                    viewBox="0 0 24 24" 
+                    style={{ 
+                      width: '1.5rem',
+                      height: '1.5rem',
+                      fill: 'currentColor'
+                    }}
+                  >
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  <span>Follow on X</span>
+                </a>
+
+                <a
+                  href="mailto:krishnavkanoi2005@gmail.com"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    padding: '1rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    transition: 'all 0.3s ease',
+                    color: 'inherit',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.transform = 'translateX(10px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  <i className="fas fa-envelope" style={{ fontSize: '1.5rem', color: '#EA4335' }}></i>
+                  <span>Send an Email</span>
+                </a>
+
+                <button
+                  onClick={handleDownloadResume}
+                  className="btn"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    padding: '1rem',
+                    fontSize: '1rem',
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}
+                >
+                  <span style={{ position: 'relative', zIndex: 1 }}>
+                    <i className="fas fa-file-pdf" style={{ fontSize: '1.5rem', marginRight: '1rem' }}></i>
+                    Download Resume
+                  </span>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: '-100%',
+                    width: '200%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                    transition: 'transform 0.5s ease',
+                  }} className="btn-shine" />
+                </button>
+              </div>
+            </div>
           </div>
         </section>
       </div>
+
+      <style>
+        {`
+          .btn:hover .btn-shine {
+            transform: translateX(100%);
+          }
+        `}
+      </style>
     </div>
   );
 };
